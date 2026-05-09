@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="about.css">
+    <script type="module">
+        import { loadConfig, loadPageContent, initLazyLoad, initNavbarScroll, initDarkMode, initPageLoader, initScrollReveal, addAnimation } from '../js/utils.js';
+        
+        // 初始化页面加载动画
+        initPageLoader();
+        
+        // 页面加载时执行
+        window.addEventListener('load', function() {
+            loadConfig();
+            loadPageContent('about');
+            initLazyLoad();
+            initNavbarScroll();
+            initDarkMode();
+            initScrollReveal();
+            
+            // 添加关于页面动画
+            addAnimation('#about-title', 'fade-in', 100);
+            addAnimation('.about-text', 'slide-in-left', 200);
+            addAnimation('.about-image', 'slide-in-right', 300);
+            addAnimation('.skill-card', 'scale-in', 400);
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="about.html">关于我</a></li>
+                <li><a href="../projects/projects.html">我的项目</a></li>
+                <li><a href="../contact/contact.html">联系方式</a></li>
+                <li><a href="../login/login.html">登录</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section id="about">
+        <h2 id="about-title">关于我</h2>
+        <div class="about-content">
+            <div class="about-text" id="about-content">
+                <p>你好，我是一名热爱编程和设计的开发者，拥有多年的前端开发经验。我擅长使用HTML、CSS、JavaScript等技术栈，致力于创建美观、响应式的网站。</p>
+                <p>我热爱学习新技术，不断提升自己的技能水平，以适应快速发展的技术环境。我相信技术的力量可以改变世界，因此我始终保持着对技术的热情和探索精神。</p>
+                <p>在工作中，我注重代码质量和用户体验，追求完美的细节。我喜欢与团队合作，共同解决问题，创造出优秀的产品。</p>
+                <p>除了编程，我还喜欢阅读、旅行和运动。这些爱好让我保持身心健康，也为我的创作提供了灵感。</p>
+            </div>
+            <div class="about-image">
+                <img class="lazy" data-src="../images/avatar.jpg" alt="个人照片" onerror="this.src='../images/avatar-backup.jpg'">
+            </div>
+        </div>
+        
+        <div class="about-skills">
+            <h3>我的技能</h3>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <h3>前端开发</h3>
+                    <ul>
+                        <li>HTML5 & CSS3</li>
+                        <li>JavaScript & TypeScript</li>
+                        <li>React & Vue</li>
+                        <li>响应式设计</li>
+                        <li>CSS预处理器</li>
+                    </ul>
+                </div>
+                <div class="skill-card">
+                    <h3>后端开发</h3>
+                    <ul>
+                        <li>Node.js</li>
+                        <li>Express</li>
+                        <li>MongoDB & MySQL</li>
+                        <li>RESTful API</li>
+                        <li>认证与授权</li>
+                    </ul>
+                </div>
+                <div class="skill-card">
+                    <h3>工具与技能</h3>
+                    <ul>
+                        <li>Git & GitHub</li>
+                        <li>Webpack & Vite</li>
+                        <li>Figma & Sketch</li>
+                        <li>敏捷开发</li>
+                        <li>问题解决</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>&copy; 2026 个人网站. 保留所有权利.</p>
+    </footer>
+    <script src="../js/analytics.js"></script>
+</body>
+</html>

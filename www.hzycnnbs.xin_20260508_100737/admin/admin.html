@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网站管理控制台</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/css/layui.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .layui-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .layui-logo {
+            color: white !important;
+            font-size: 20px;
+            font-weight: 800;
+            line-height: 60px;
+        }
+
+        .layui-logo a {
+            color: white !important;
+            text-decoration: none;
+        }
+
+        .layui-nav .layui-nav-item a {
+            color: white !important;
+        }
+
+        .layui-nav .layui-nav-item a:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .layui-side {
+            background: #2c3e50 !important;
+        }
+
+        .layui-nav-tree .layui-nav-item a {
+            color: #ecf0f1 !important;
+        }
+
+        .layui-nav-tree .layui-nav-item a:hover {
+            background: #34495e !important;
+        }
+
+        .layui-nav-tree .layui-nav-child dd a {
+            color: #bdc3c7 !important;
+        }
+
+        .layui-nav-tree .layui-nav-child dd a:hover {
+            background: #34495e !important;
+        }
+
+        .layui-nav-tree .layui-nav-child dd.layui-this a {
+            background: #667eea !important;
+            color: white !important;
+        }
+
+        .layui-body {
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .layui-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .layui-card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            font-weight: 600;
+        }
+
+        .layui-form-label {
+            color: #555;
+            font-weight: 600;
+        }
+
+        .layui-input, .layui-textarea {
+            border-radius: 5px;
+            border-color: #ddd;
+        }
+
+        .layui-input:focus, .layui-textarea:focus {
+            border-color: #667eea;
+        }
+
+        .layui-btn {
+            border-radius: 5px;
+        }
+
+        .layui-btn-primary {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .layui-btn-primary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .layui-elem-quote {
+            border-left: 4px solid #667eea;
+            background: white;
+            border-radius: 5px;
+        }
+
+        /* 统计卡片样式 */
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stats-card.primary::before { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stats-card.success::before { background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); }
+        .stats-card.warning::before { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); }
+        .stats-card.danger::before { background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%); }
+
+        .stats-card .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .stats-card.primary .stats-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stats-card.success .stats-icon { background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); }
+        .stats-card.warning .stats-icon { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); }
+        .stats-card.danger .stats-icon { background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%); }
+
+        .stats-card .stats-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stats-card .stats-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .stats-card .stats-change {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stats-card .stats-change.up { color: #4caf50; }
+        .stats-card .stats-change.down { color: #f44336; }
+
+        /* 图表容器样式 */
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-container .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        /* 活动列表样式 */
+        .activity-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .activity-list li {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-list li:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 16px;
+            color: white;
+        }
+
+        .activity-icon.login { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .activity-icon.update { background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); }
+        .activity-icon.upload { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); }
+        .activity-icon.delete { background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%); }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-content .activity-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .activity-content .activity-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* 快捷操作按钮 */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quick-actions .layui-btn {
+            border-radius: 20px;
+            padding: 0 20px;
+        }
+
+        /* 菜单项样式 */
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .menu-item input {
+            flex: 1;
+        }
+
+        .menu-item .remove-menu-item {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .menu-item .remove-menu-item:hover {
+            background: #d32f2f;
+        }
+
+        /* 图片列表样式 */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .image-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .image-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .image-item .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(244, 67, 54, 0.9);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .image-item .delete-btn:hover {
+            background: #d32f2f;
+            transform: scale(1.1);
+        }
+
+        .image-item .image-name {
+            padding: 10px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            background: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 颜色选择器 */
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.active {
+            border-color: #333;
+            transform: scale(1.1);
+        }
+
+        /* 上传区域 */
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .upload-area i {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        /* 成功消息 */
+        .success-message {
+            display: none;
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* 内容区域显示控制 */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* 系统信息卡片 */
+        .info-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-card h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .info-card .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-card .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-card .info-label {
+            color: #666;
+        }
+
+        .info-card .info-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .layui-body {
+                padding: 10px;
+            }
+            
+            .layui-logo {
+                font-size: 16px;
+            }
+            
+            .layui-nav .layui-nav-item a {
+                font-size: 14px;
+            }
+            
+            .layui-side {
+                width: 180px;
+            }
+            
+            .layui-body {
+                left: 180px;
+            }
+            
+            .stats-card {
+                margin-bottom: 15px;
+                padding: 15px;
+            }
+            
+            .stats-card .stats-number {
+                font-size: 24px;
+            }
+            
+            .stats-card .stats-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .chart-wrapper {
+                height: 250px;
+            }
+
+            .image-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 10px;
+            }
+            
+            .image-item img {
+                height: 120px;
+            }
+            
+            .quick-actions .layui-btn {
+                padding: 0 15px;
+                font-size: 12px;
+            }
+            
+            .activity-list li {
+                padding: 10px 0;
+            }
+            
+            .activity-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+            
+            .layui-form-label {
+                width: 100px;
+            }
+            
+            .layui-input-block {
+                margin-left: 100px;
+            }
+            
+            .upload-area {
+                padding: 30px;
+            }
+            
+            .upload-area i {
+                font-size: 36px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .layui-body {
+                padding: 8px;
+            }
+            
+            .layui-logo {
+                font-size: 14px;
+                padding: 0 10px;
+            }
+            
+            .layui-nav .layui-nav-item a {
+                font-size: 12px;
+                padding: 0 10px;
+            }
+            
+            .layui-side {
+                width: 160px;
+            }
+            
+            .layui-body {
+                left: 160px;
+            }
+            
+            .stats-card {
+                padding: 12px;
+            }
+            
+            .stats-card .stats-number {
+                font-size: 20px;
+            }
+            
+            .stats-card .stats-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            
+            .stats-card .stats-label {
+                font-size: 12px;
+            }
+            
+            .chart-wrapper {
+                height: 200px;
+            }
+            
+            .chart-container .chart-title {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            
+            .image-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 8px;
+            }
+            
+            .image-item img {
+                height: 100px;
+            }
+            
+            .image-item .image-name {
+                padding: 8px;
+                font-size: 10px;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .quick-actions .layui-btn {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            .activity-list li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .activity-icon {
+                margin-bottom: 8px;
+            }
+            
+            .layui-form-label {
+                width: 80px;
+                font-size: 12px;
+            }
+            
+            .layui-input-block {
+                margin-left: 80px;
+            }
+            
+            .layui-input,
+            .layui-textarea,
+            .layui-select {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+            
+            .upload-area {
+                padding: 20px;
+            }
+            
+            .upload-area i {
+                font-size: 24px;
+            }
+            
+            .upload-area h3 {
+                font-size: 14px;
+            }
+            
+            .upload-area p {
+                font-size: 12px;
+            }
+            
+            .info-card {
+                padding: 15px;
+            }
+            
+            .info-card h4 {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+            
+            .info-item {
+                padding: 8px 0;
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .layui-logo {
+                font-size: 12px;
+            }
+            
+            .layui-side {
+                width: 140px;
+            }
+            
+            .layui-body {
+                left: 140px;
+            }
+            
+            .layui-nav-tree .layui-nav-item a {
+                font-size: 12px;
+                padding: 0 10px;
+            }
+            
+            .stats-card {
+                padding: 10px;
+            }
+            
+            .stats-card .stats-number {
+                font-size: 18px;
+            }
+            
+            .image-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+            
+            .image-item img {
+                height: 80px;
+            }
+            
+            .layui-form-label {
+                width: 70px;
+                font-size: 11px;
+            }
+            
+            .layui-input-block {
+                margin-left: 70px;
+            }
+        }
+    </style>
+</head>
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+        <!-- 顶部导航 -->
+        <div class="layui-header">
+            <div class="layui-logo">
+                <a href="../index.html"><i class="fa fa-cog"></i> 网站管理控制台</a>
+            </div>
+            
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item">
+                    <a href="../index.html" target="_blank">
+                        <i class="fa fa-home"></i> 网站主页
+                    </a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <i class="fa fa-user-circle-o"></i> 管理员
+                        <span class="layui-nav-more"></span>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" id="logout-link"><i class="fa fa-sign-out"></i> 退出登录</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- 侧边栏 -->
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-shrink="all">
+                    <li class="layui-nav-item layui-this">
+                        <a href="javascript:;" onclick="showSection('dashboard')"><i class="fa fa-dashboard"></i> 控制台</a>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;"><i class="fa fa-cog"></i> 基本设置<span class="layui-nav-more"></span></a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;" onclick="showSection('basic-info')"><i class="fa fa-info-circle"></i> 基本信息</a></dd>
+                            <dd><a href="javascript:;" onclick="showSection('navigation')"><i class="fa fa-bars"></i> 导航菜单</a></dd>
+                            <dd><a href="javascript:;" onclick="showSection('theme')"><i class="fa fa-palette"></i> 主题设置</a></dd>
+                            <dd><a href="javascript:;" onclick="showSection('contact')"><i class="fa fa-envelope"></i> 联系方式</a></dd>
+                        </dl>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;"><i class="fa fa-file-text-o"></i> 内容管理<span class="layui-nav-more"></span></a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;" onclick="showSection('pages')"><i class="fa fa-file"></i> 页面管理</a></dd>
+                            <dd><a href="javascript:;" onclick="showSection('images')"><i class="fa fa-image"></i> 图片管理</a></dd>
+                        </dl>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;"><i class="fa fa-cogs"></i> 系统管理<span class="layui-nav-more"></span></a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;" onclick="showSection('system')"><i class="fa fa-server"></i> 系统信息</a></dd>
+                            <dd><a href="javascript:;" onclick="showSection('visits')"><i class="fa fa-eye"></i> 访问记录</a></dd>
+                            <dd><a href="javascript:;" onclick="showSection('logs')"><i class="fa fa-history"></i> 操作日志</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div class="layui-body">
+            <!-- 用户信息栏 -->
+            <blockquote class="layui-elem-quote">
+                <i class="fa fa-user"></i> 当前登录用户：<strong>管理员</strong> &nbsp;|&nbsp;
+                <i class="fa fa-clock-o"></i> 登录时间：<span id="login-time"></span> &nbsp;|&nbsp;
+                <i class="fa fa-sign-in"></i> 累计登录次数：<span id="login-count">1</span>
+            </blockquote>
+            
+            <!-- 成功消息 -->
+            <div class="success-message" id="success-message">
+                <i class="fa fa-check-circle"></i> 操作成功！
+            </div>
+
+            <!-- 控制台首页 -->
+            <div id="dashboard" class="content-section active">
+                <!-- 统计卡片 -->
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md3 layui-col-sm6">
+                        <div class="stats-card primary" onclick="showSection('logs')">
+                            <div class="stats-icon">
+                                <i class="fa fa-eye"></i>
+                            </div>
+                            <div class="stats-number" id="visit-count">0</div>
+                            <div class="stats-label">总访问量</div>
+                            <div class="stats-change up">
+                                <i class="fa fa-arrow-up"></i> <span id="visit-change">0%</span> 较上周
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md3 layui-col-sm6">
+                        <div class="stats-card success" onclick="showSection('pages')">
+                            <div class="stats-icon">
+                                <i class="fa fa-file-text"></i>
+                            </div>
+                            <div class="stats-number" id="page-stats">4</div>
+                            <div class="stats-label">页面数量</div>
+                            <div class="stats-change up">
+                                <i class="fa fa-check"></i> 正常运行
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md3 layui-col-sm6">
+                        <div class="stats-card warning" onclick="showSection('images')">
+                            <div class="stats-icon">
+                                <i class="fa fa-image"></i>
+                            </div>
+                            <div class="stats-number" id="image-stats">0</div>
+                            <div class="stats-label">图片数量</div>
+                            <div class="stats-change up">
+                                <i class="fa fa-arrow-up"></i> <span id="image-change">0</span> 张新增
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md3 layui-col-sm6">
+                        <div class="stats-card danger" onclick="showSection('navigation')">
+                            <div class="stats-icon">
+                                <i class="fa fa-bars"></i>
+                            </div>
+                            <div class="stats-number" id="menu-stats">4</div>
+                            <div class="stats-label">菜单项</div>
+                            <div class="stats-change up">
+                                <i class="fa fa-check"></i> 已配置
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 图表区域 -->
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md8">
+                        <div class="chart-container">
+                            <div class="chart-title">
+                                <i class="fa fa-line-chart"></i> 访问趋势
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="visitChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4">
+                        <div class="chart-container">
+                            <div class="chart-title">
+                                <i class="fa fa-pie-chart"></i> 页面访问分布
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="pageChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 活动日志和快捷操作 -->
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md6">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="fa fa-list"></i> 最近活动
+                            </div>
+                            <div class="layui-card-body">
+                                <ul class="activity-list" id="activity-list">
+                                    <li>
+                                        <div class="activity-icon login">
+                                            <i class="fa fa-user"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <div class="activity-title">管理员登录系统</div>
+                                            <div class="activity-time">刚刚</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md6">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="fa fa-bolt"></i> 快捷操作
+                            </div>
+                            <div class="layui-card-body">
+                                <div class="quick-actions">
+                                    <button class="layui-btn layui-btn-primary" onclick="showSection('basic-info')">
+                                        <i class="fa fa-cog"></i> 网站设置
+                                    </button>
+                                    <button class="layui-btn layui-btn-primary" onclick="showSection('images')">
+                                        <i class="fa fa-image"></i> 上传图片
+                                    </button>
+                                    <button class="layui-btn layui-btn-primary" onclick="showSection('pages')">
+                                        <i class="fa fa-file"></i> 编辑页面
+                                    </button>
+                                    <button class="layui-btn layui-btn-primary" onclick="showSection('navigation')">
+                                        <i class="fa fa-bars"></i> 管理菜单
+                                    </button>
+                                    <button class="layui-btn layui-btn-primary" onclick="window.open('../index.html', '_blank')">
+                                        <i class="fa fa-external-link"></i> 查看网站
+                                    </button>
+                                    <button class="layui-btn layui-btn-primary" onclick="refreshStats()">
+                                        <i class="fa fa-refresh"></i> 刷新数据
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 基本信息 -->
+            <div id="basic-info" class="content-section">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-info-circle"></i> 网站基本信息
+                    </div>
+                    <div class="layui-card-body">
+                        <form class="layui-form" lay-filter="basicInfoForm">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">网站标题</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="siteTitle" placeholder="请输入网站标题" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">网站描述</label>
+                                <div class="layui-input-block">
+                                    <textarea name="siteDescription" placeholder="请输入网站描述" class="layui-textarea" rows="4"></textarea>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">网站关键词</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="siteKeywords" placeholder="请输入网站关键词，用逗号分隔" class="layui-input">
+                                    <div class="layui-form-mid layui-word-aux">多个关键词请用英文逗号分隔</div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="button" class="layui-btn" onclick="saveBasicInfo()">
+                                        <i class="fa fa-save"></i> 保存信息
+                                    </button>
+                                    <button type="button" class="layui-btn layui-btn-primary" onclick="resetBasicInfo()">
+                                        <i class="fa fa-undo"></i> 重置
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 导航菜单 -->
+            <div id="navigation" class="content-section">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-bars"></i> 导航菜单管理
+                    </div>
+                    <div class="layui-card-body">
+                        <div id="menu-items"></div>
+                        <button class="layui-btn layui-btn-primary" onclick="addMenuItem()" style="margin-top: 15px;">
+                            <i class="fa fa-plus"></i> 添加菜单项
+                        </button>
+                        <hr>
+                        <button class="layui-btn" onclick="saveMenuItems()">
+                            <i class="fa fa-save"></i> 保存菜单
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主题设置 -->
+            <div id="theme" class="content-section">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-palette"></i> 主题设置
+                    </div>
+                    <div class="layui-card-body">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">主题颜色</label>
+                            <div class="layui-input-block">
+                                <div class="color-picker">
+                                    <div class="color-option" data-color="#667eea" style="background: #667eea;" onclick="selectColor(this)"></div>
+                                    <div class="color-option" data-color="#4caf50" style="background: #4caf50;" onclick="selectColor(this)"></div>
+                                    <div class="color-option" data-color="#ff9800" style="background: #ff9800;" onclick="selectColor(this)"></div>
+                                    <div class="color-option" data-color="#f44336" style="background: #f44336;" onclick="selectColor(this)"></div>
+                                    <div class="color-option" data-color="#9c27b0" style="background: #9c27b0;" onclick="selectColor(this)"></div>
+                                    <div class="color-option" data-color="#00bcd4" style="background: #00bcd4;" onclick="selectColor(this)"></div>
+                                </div>
+                                <input type="hidden" id="theme-color" value="#667eea">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" onclick="saveTheme()">
+                                    <i class="fa fa-save"></i> 保存主题
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 联系方式 -->
+            <div id="contact" class="content-section">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-envelope"></i> 联系方式设置
+                    </div>
+                    <div class="layui-card-body">
+                        <form class="layui-form" lay-filter="contactForm">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">邮箱地址</label>
+                                <div class="layui-input-block">
+                                    <input type="email" name="email" placeholder="请输入邮箱地址" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">联系电话</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="phone" placeholder="请输入联系电话" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">微信号</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="wechat" placeholder="请输入微信号" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">QQ号码</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="qq" placeholder="请输入QQ号码" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">GitHub</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="github" placeholder="请输入GitHub链接" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="button" class="layui-btn" onclick="saveContact()">
+                                        <i class="fa fa-save"></i> 保存联系方式
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 页面管理 -->
+            <div id="pages" class="content-section">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-file"></i> 页面内容管理
+                    </div>
+                    <div class="layui-card-body">
+                        <form class="layui-form" lay-filter="pageForm">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">选择页面</label>
+                                <div class="layui-input-block">
+                                    <select name="pageSelect" lay-filter="pageSelect" onchange="loadPageContent()">
+                                        <option value="index">首页</option>
+                                        <option value="about">关于我</option>
+                                        <option value="projects">我的项目</option>
+                                        <option value="contact">联系方式</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">页面标题</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="pageTitle" placeholder="请输入页面标题" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">页面内容</label>
+                                <div class="layui-input-block">
+                                    <textarea name="pageContent" placeholder="请输入页面内容，支持HTML标签" class="layui-textarea" rows="10"></textarea>
+                                    <div class="layui-form-mid layui-word-aux">支持HTML标签，可自定义样式</div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="button" class="layui-btn" onclick="savePage()">
+                                        <i class="fa fa-save"></i> 保存页面
+                                    </button>
+                                    <button type="button" class="layui-btn layui-btn-primary" onclick="previewPage()">
+                                        <i class="fa fa-eye"></i> 预览
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图片管理 -->
+            <div id="images" class="content-section">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-image"></i> 图片管理
+                    </div>
+                    <div class="layui-card-body">
+                        <div class="upload-area" onclick="document.getElementById('image-upload').click()">
+                            <i class="fa fa-cloud-upload"></i>
+                            <h3>点击或拖拽上传图片</h3>
+                            <p>支持 JPG、PNG、GIF 格式，单张图片不超过 5MB</p>
+                            <input type="file" id="image-upload" style="display: none;" accept="image/*" multiple onchange="uploadImages(event)">
+                        </div>
+                        <div class="image-grid" id="image-grid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 系统信息 -->
+            <div id="system" class="content-section">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md6">
+                        <div class="info-card">
+                            <h4><i class="fa fa-desktop"></i> 浏览器信息</h4>
+                            <div class="info-item">
+                                <span class="info-label">浏览器</span>
+                                <span class="info-value" id="browser-info">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">操作系统</span>
+                                <span class="info-value" id="os-info">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">屏幕分辨率</span>
+                                <span class="info-value" id="screen-info">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">语言</span>
+                                <span class="info-value" id="language-info">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md6">
+                        <div class="info-card">
+                            <h4><i class="fa fa-server"></i> 系统状态</h4>
+                            <div class="info-item">
+                                <span class="info-label">系统版本</span>
+                                <span class="info-value">v1.0.0</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">运行状态</span>
+                                <span class="info-value" style="color: #4caf50;">正常</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">LocalStorage</span>
+                                <span class="info-value" id="storage-info">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">最后更新</span>
+                                <span class="info-value" id="last-update">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 数据管理 -->
+                <div class="layui-card" style="margin-top: 20px;">
+                    <div class="layui-card-header">
+                        <i class="fa fa-database"></i> 数据管理
+                    </div>
+                    <div class="layui-card-body">
+                        <div class="layui-row layui-col-space15">
+                            <div class="layui-col-md4">
+                                <div class="stats-card primary" onclick="backupData()">
+                                    <div class="stats-icon">
+                                        <i class="fa fa-download"></i>
+                                    </div>
+                                    <div class="stats-number">备份</div>
+                                    <div class="stats-label">导出数据</div>
+                                    <div class="stats-change up">
+                                        <i class="fa fa-info-circle"></i> 导出为JSON文件
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="stats-card success" onclick="document.getElementById('restore-input').click()">
+                                    <div class="stats-icon">
+                                        <i class="fa fa-upload"></i>
+                                    </div>
+                                    <div class="stats-number">恢复</div>
+                                    <div class="stats-label">导入数据</div>
+                                    <div class="stats-change up">
+                                        <i class="fa fa-info-circle"></i> 从JSON文件导入
+                                    </div>
+                                    <input type="file" id="restore-input" style="display: none;" accept=".json" onchange="restoreData(event)">
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="stats-card danger" onclick="resetData()">
+                                    <div class="stats-icon">
+                                        <i class="fa fa-trash"></i>
+                                    </div>
+                                    <div class="stats-number">重置</div>
+                                    <div class="stats-label">清空数据</div>
+                                    <div class="stats-change down">
+                                        <i class="fa fa-warning"></i> 此操作不可恢复
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item" style="margin-top: 20px;">
+                            <div class="layui-input-block">
+                                <button type="button" class="layui-btn" onclick="backupData()">
+                                    <i class="fa fa-download"></i> 备份数据
+                                </button>
+                                <button type="button" class="layui-btn layui-btn-normal" onclick="document.getElementById('restore-input').click()">
+                                    <i class="fa fa-upload"></i> 恢复数据
+                                </button>
+                                <button type="button" class="layui-btn layui-btn-danger" onclick="resetData()">
+                                    <i class="fa fa-trash"></i> 重置数据
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 访问记录 -->
+            <div id="visits" class="content-section">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-eye"></i> 访问记录
+                        <button class="layui-btn layui-btn-xs layui-btn-danger" style="float: right; margin-top: 8px;" onclick="clearVisits()">
+                            <i class="fa fa-trash"></i> 清空记录
+                        </button>
+                    </div>
+                    <div class="layui-card-body">
+                        <div class="layui-row layui-col-space15" style="margin-bottom: 20px;">
+                            <div class="layui-col-md3">
+                                <div class="stats-card primary">
+                                    <div class="stats-icon">
+                                        <i class="fa fa-users"></i>
+                                    </div>
+                                    <div class="stats-number" id="unique-visitors">0</div>
+                                    <div class="stats-label">独立访客</div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md3">
+                                <div class="stats-card success">
+                                    <div class="stats-icon">
+                                        <i class="fa fa-eye"></i>
+                                    </div>
+                                    <div class="stats-number" id="total-page-views">0</div>
+                                    <div class="stats-label">页面浏览量</div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md3">
+                                <div class="stats-card warning">
+                                    <div class="stats-icon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <div class="stats-number" id="today-visits">0</div>
+                                    <div class="stats-label">今日访问</div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md3">
+                                <div class="stats-card danger">
+                                    <div class="stats-icon">
+                                        <i class="fa fa-calendar-week"></i>
+                                    </div>
+                                    <div class="stats-number" id="week-visits">0</div>
+                                    <div class="stats-label">本周访问</div>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="layui-table">
+                            <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>页面</th>
+                                    <th>来源</th>
+                                    <th>设备</th>
+                                    <th>分辨率</th>
+                                    <th>语言</th>
+                                </tr>
+                            </thead>
+                            <tbody id="visits-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作日志 -->
+            <div id="logs" class="content-section">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-history"></i> 操作日志
+                        <button class="layui-btn layui-btn-xs layui-btn-danger" style="float: right; margin-top: 8px;" onclick="clearLogs()">
+                            <i class="fa fa-trash"></i> 清空日志
+                        </button>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-table">
+                            <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>操作类型</th>
+                                    <th>操作内容</th>
+                                    <th>操作人</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="../js/analytics.js"></script>
+    <script>
+        // 检查登录状态
+        if (!localStorage.getItem('userLoggedIn')) {
+            window.location.href = '../login/login.html';
+        }
+
+        // 初始化Layui
+        layui.use(['element', 'form', 'layer'], function(){
+            var element = layui.element;
+            var form = layui.form;
+            var layer = layui.layer;
+
+            // 初始化数据
+            initData();
+
+            // 初始化图表
+            initCharts();
+
+            // 更新统计
+            updateStats();
+
+            // 加载日志
+            loadLogs();
+
+            // 加载访问记录
+            loadVisits();
+
+            // 绑定导航点击事件
+            element.on('nav(layui-nav-tree)', function(elem){
+                console.log(elem);
+            });
+        });
+
+        // 显示指定区域
+        function showSection(sectionId) {
+            // 隐藏所有区域
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // 显示指定区域
+            document.getElementById(sectionId).classList.add('active');
+
+            // 更新侧边栏选中状态
+            document.querySelectorAll('.layui-nav-tree .layui-nav-item').forEach(item => {
+                item.classList.remove('layui-this');
+            });
+
+            // 添加日志
+            addLog('view', '查看' + getSectionName(sectionId) + '页面');
+        }
+
+        // 获取区域名称
+        function getSectionName(sectionId) {
+            const names = {
+                'dashboard': '控制台',
+                'basic-info': '基本信息',
+                'navigation': '导航菜单',
+                'theme': '主题设置',
+                'contact': '联系方式',
+                'pages': '页面管理',
+                'images': '图片管理',
+                'system': '系统信息',
+                'visits': '访问记录',
+                'logs': '操作日志'
+            };
+            return names[sectionId] || sectionId;
+        }
+
+        // 初始化数据
+        function initData() {
+            // 设置登录时间
+            const now = new Date();
+            document.getElementById('login-time').textContent = now.toLocaleString();
+
+            // 获取或初始化配置
+            let config = JSON.parse(localStorage.getItem('siteConfig'));
+            if (!config) {
+                config = {
+                    siteTitle: '个人网站',
+                    siteDescription: '这是我的个人网站，展示我的项目和技能',
+                    siteKeywords: '个人,网站,项目,技能',
+                    themeColor: '#667eea',
+                    menuItems: [
+                        { name: '首页', url: 'home/index.html' },
+                        { name: '关于我', url: 'about/about.html' },
+                        { name: '我的项目', url: 'projects/projects.html' },
+                        { name: '联系方式', url: 'contact/contact.html' }
+                    ],
+                    contact: {
+                        email: '',
+                        phone: '',
+                        wechat: '',
+                        qq: '',
+                        github: ''
+                    },
+                    pages: {
+                        index: {
+                            title: '欢迎来到我的个人网站',
+                            content: '<p>这里是首页内容，您可以在管理后台编辑此内容。</p>'
+                        },
+                        about: {
+                            title: '关于我',
+                            content: '<p>这里是关于我的页面内容。</p>'
+                        },
+                        projects: {
+                            title: '我的项目',
+                            content: '<p>这里展示我的项目。</p>'
+                        },
+                        contact: {
+                            title: '联系方式',
+                            content: '<p>欢迎通过以下方式联系我。</p>'
+                        }
+                    },
+                    images: [],
+                    visits: 0
+                };
+                localStorage.setItem('siteConfig', JSON.stringify(config));
+            }
+
+            // 填充表单
+            fillForms(config);
+
+            // 渲染菜单
+            renderMenuItems(config.menuItems);
+
+            // 渲染图片
+            renderImages(config.images);
+
+            // 设置主题颜色
+            setThemeColor(config.themeColor);
+
+            // 更新系统信息
+            updateSystemInfo();
+        }
+
+        // 填充表单
+        function fillForms(config) {
+            // 基本信息
+            document.querySelector('input[name="siteTitle"]').value = config.siteTitle || '';
+            document.querySelector('textarea[name="siteDescription"]').value = config.siteDescription || '';
+            document.querySelector('input[name="siteKeywords"]').value = config.siteKeywords || '';
+
+            // 联系方式
+            document.querySelector('input[name="email"]').value = config.contact?.email || '';
+            document.querySelector('input[name="phone"]').value = config.contact?.phone || '';
+            document.querySelector('input[name="wechat"]').value = config.contact?.wechat || '';
+            document.querySelector('input[name="qq"]').value = config.contact?.qq || '';
+            document.querySelector('input[name="github"]').value = config.contact?.github || '';
+
+            // 页面内容
+            loadPageContent();
+        }
+
+        // 保存基本信息
+        function saveBasicInfo() {
+            const config = JSON.parse(localStorage.getItem('siteConfig')) || {};
+            config.siteTitle = document.querySelector('input[name="siteTitle"]').value;
+            config.siteDescription = document.querySelector('textarea[name="siteDescription"]').value;
+            config.siteKeywords = document.querySelector('input[name="siteKeywords"]').value;
+
+            localStorage.setItem('siteConfig', JSON.stringify(config));
+
+            showSuccess('基本信息保存成功！');
+            addLog('update', '修改网站基本信息');
+            updateStats();
+        }
+
+        // 重置基本信息
+        function resetBasicInfo() {
+            const config = JSON.parse(localStorage.getItem('siteConfig'));
+            if (config) {
+                document.querySelector('input[name="siteTitle"]').value = config.siteTitle || '';
+                document.querySelector('textarea[name="siteDescription"]').value = config.siteDescription || '';
+                document.querySelector('input[name="siteKeywords"]').value = config.siteKeywords || '';
+            }
+            showSuccess('已重置为上次保存的内容');
+        }
+
+        // 渲染菜单项
+        function renderMenuItems(menuItems) {
+            const container = document.getElementById('menu-items');
+            container.innerHTML = '';
+
+            menuItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'menu-item';
+                div.innerHTML = `
+                    <input type="text" class="layui-input menu-name" placeholder="菜单名称" value="${item.name}" data-index="${index}">
+                    <input type="text" class="layui-input menu-url" placeholder="链接地址" value="${item.url}" data-index="${index}">
+                    <button class="remove-menu-item" onclick="removeMenuItem(${index})">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 添加菜单项
+        function addMenuItem() {
+            const container = document.getElementById('menu-items');
+            const index = container.children.length;
+
+            const div = document.createElement('div');
+            div.className = 'menu-item';
+            div.innerHTML = `
+                <input type="text" class="layui-input menu-name" placeholder="菜单名称" data-index="${index}">
+                <input type="text" class="layui-input menu-url" placeholder="链接地址" data-index="${index}">
+                <button class="remove-menu-item" onclick="removeMenuItem(${index})">
+                    <i class="fa fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(div);
+        }
+
+        // 删除菜单项
+        function removeMenuItem(index) {
+            const container = document.getElementById('menu-items');
+            if (container.children[index]) {
+                container.children[index].remove();
+                // 重新索引
+                Array.from(container.children).forEach((item, i) => {
+                    item.querySelector('.menu-name').dataset.index = i;
+                    item.querySelector('.menu-url').dataset.index = i;
+                    item.querySelector('.remove-menu-item').setAttribute('onclick', `removeMenuItem(${i})`);
+                });
+            }
+        }
+
+        // 保存菜单项
+        function saveMenuItems() {
+            const menuItems = [];
+            document.querySelectorAll('.menu-item').forEach(item => {
+                const name = item.querySelector('.menu-name').value;
+                const url = item.querySelector('.menu-url').value;
+                if (name && url) {
+                    menuItems.push({ name, url });
+                }
+            });
+
+            const config = JSON.parse(localStorage.getItem('siteConfig')) || {};
+            config.menuItems = menuItems;
+            localStorage.setItem('siteConfig', JSON.stringify(config));
+
+            showSuccess('菜单保存成功！');
+            addLog('update', '修改导航菜单');
+            updateStats();
+        }
+
+        // 选择颜色
+        function selectColor(element) {
+            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('theme-color').value = element.dataset.color;
+        }
+
+        // 设置主题颜色
+        function setThemeColor(color) {
+            document.querySelectorAll('.color-option').forEach(opt => {
+                opt.classList.remove('active');
+                if (opt.dataset.color === color) {
+                    opt.classList.add('active');
+                }
+            });
+            document.getElementById('theme-color').value = color;
+        }
+
+        // 保存主题
+        function saveTheme() {
+            const color = document.getElementById('theme-color').value;
+            const config = JSON.parse(localStorage.getItem('siteConfig')) || {};
+            config.themeColor = color;
+            localStorage.setItem('siteConfig', JSON.stringify(config));
+
+            showSuccess('主题保存成功！');
+            addLog('update', '修改主题颜色');
+        }
+
+        // 保存联系方式
+        function saveContact() {
+            const config = JSON.parse(localStorage.getItem('siteConfig')) || {};
+            config.contact = {
+                email: document.querySelector('input[name="email"]').value,
+                phone: document.querySelector('input[name="phone"]').value,
+                wechat: document.querySelector('input[name="wechat"]').value,
+                qq: document.querySelector('input[name="qq"]').value,
+                github: document.querySelector('input[name="github"]').value
+            };
+            localStorage.setItem('siteConfig', JSON.stringify(config));
+
+            showSuccess('联系方式保存成功！');
+            addLog('update', '修改联系方式');
+        }
+
+        // 加载页面内容
+        function loadPageContent() {
+            const pageSelect = document.querySelector('select[name="pageSelect"]');
+            const pageKey = pageSelect ? pageSelect.value : 'index';
+
+            const config = JSON.parse(localStorage.getItem('siteConfig')) || {};
+            const page = config.pages?.[pageKey] || { title: '', content: '' };
+
+            document.querySelector('input[name="pageTitle"]').value = page.title;
+            document.querySelector('textarea[name="pageContent"]').value = page.content;
+        }
+
+        // 保存页面
+        function savePage() {
+            const pageSelect = document.querySelector('select[name="pageSelect"]');
+            const pageKey = pageSelect.value;
+
+            const config = JSON.parse(localStorage.getItem('siteConfig')) || {};
+            if (!config.pages) config.pages = {};
+
+            config.pages[pageKey] = {
+                title: document.querySelector('input[name="pageTitle"]').value,
+                content: document.querySelector('textarea[name="pageContent"]').value
+            };
+
+            localStorage.setItem('siteConfig', JSON.stringify(config));
+
+            showSuccess('页面保存成功！');
+            addLog('update', '修改' + getSectionName(pageKey) + '页面内容');
+        }
+
+        // 预览页面
+        function previewPage() {
+            const pageSelect = document.querySelector('select[name="pageSelect"]');
+            const pageKey = pageSelect.value;
+            const urls = {
+                'index': '../index.html',
+                'about': '../about/about.html',
+                'projects': '../projects/projects.html',
+                'contact': '../contact/contact.html'
+            };
+            window.open(urls[pageKey], '_blank');
+        }
+
+        // 上传图片
+        function uploadImages(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+
+            const config = JSON.parse(localStorage.getItem('siteConfig')) || {};
+            if (!config.images) config.images = [];
+
+            Array.from(files).forEach(file => {
+                if (file.size > 5 * 1024 * 1024) {
+                    layui.layer.msg('图片大小不能超过5MB', {icon: 2});
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageName = 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9) + '.jpg';
+                    config.images.push({
+                        name: imageName,
+                        src: e.target.result,
+                        uploadTime: new Date().toISOString()
+                    });
+
+                    localStorage.setItem('siteConfig', JSON.stringify(config));
+                    renderImages(config.images);
+                    updateStats();
+                    addLog('upload', '上传图片: ' + file.name);
+                    showSuccess('图片上传成功！');
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // 清空input
+            event.target.value = '';
+        }
+
+        // 渲染图片
+        function renderImages(images) {
+            const grid = document.getElementById('image-grid');
+            grid.innerHTML = '';
+
+            images.forEach((image, index) => {
+                const div = document.createElement('div');
+                div.className = 'image-item';
+                div.innerHTML = `
+                    <img src="${image.src}" alt="${image.name}" onclick="previewImage('${image.src}')">
+                    <button class="delete-btn" onclick="deleteImage(${index})">
+                        <i class="fa fa-times"></i>
+                    </button>
+                    <div class="image-name">${image.name}</div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        // 预览图片
+        function previewImage(src) {
+            layui.layer.open({
+                type: 1,
+                title: false,
+                closeBtn: 0,
+                area: ['80%', '80%'],
+                shadeClose: true,
+                content: `<img src="${src}" style="width: 100%; height: 100%; object-fit: contain;">`
+            });
+        }
+
+        // 删除图片
+        function deleteImage(index) {
+            layui.layer.confirm('确定要删除这张图片吗？', function(){
+                const config = JSON.parse(localStorage.getItem('siteConfig')) || {};
+                const imageName = config.images[index].name;
+                config.images.splice(index, 1);
+                localStorage.setItem('siteConfig', JSON.stringify(config));
+                renderImages(config.images);
+                updateStats();
+                addLog('delete', '删除图片: ' + imageName);
+                showSuccess('图片删除成功！');
+                layui.layer.closeAll();
+            });
+        }
+
+        // 更新系统信息
+        function updateSystemInfo() {
+            // 浏览器信息
+            const ua = navigator.userAgent;
+            let browser = '未知浏览器';
+            let os = '未知系统';
+
+            if (ua.indexOf('Chrome') > -1) browser = 'Chrome';
+            else if (ua.indexOf('Firefox') > -1) browser = 'Firefox';
+            else if (ua.indexOf('Safari') > -1) browser = 'Safari';
+            else if (ua.indexOf('Edge') > -1) browser = 'Edge';
+
+            if (ua.indexOf('Windows') > -1) os = 'Windows';
+            else if (ua.indexOf('Mac') > -1) os = 'macOS';
+            else if (ua.indexOf('Linux') > -1) os = 'Linux';
+            else if (ua.indexOf('Android') > -1) os = 'Android';
+            else if (ua.indexOf('iOS') > -1) os = 'iOS';
+
+            document.getElementById('browser-info').textContent = browser;
+            document.getElementById('os-info').textContent = os;
+            document.getElementById('screen-info').textContent = window.screen.width + 'x' + window.screen.height;
+            document.getElementById('language-info').textContent = navigator.language;
+
+            // 存储信息
+            let totalSize = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    totalSize += localStorage[key].length * 2;
+                }
+            }
+            document.getElementById('storage-info').textContent = (totalSize / 1024).toFixed(2) + ' KB';
+
+            // 最后更新时间
+            const config = JSON.parse(localStorage.getItem('siteConfig'));
+            if (config && config.lastUpdate) {
+                document.getElementById('last-update').textContent = new Date(config.lastUpdate).toLocaleString();
+            } else {
+                document.getElementById('last-update').textContent = '未记录';
+            }
+        }
+
+        // 初始化图表
+        let visitChart, pageChart;
+
+        // 初始化图表
+        async function initCharts() {
+            try {
+                // 从后端API获取真实数据
+                const response = await fetch('http://localhost:3000/api/analytics/stats');
+                if (!response.ok) throw new Error('Failed to get stats');
+                const analytics = await response.json();
+                renderCharts(analytics);
+            } catch (error) {
+                // 静默处理错误，只在开发环境显示
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    console.log('Analytics API unavailable, using local data');
+                }
+                // 降级使用本地数据
+                const localStats = window.WebsiteAnalytics ? window.WebsiteAnalytics.getLocalStats() : null;
+                if (localStats) {
+                    renderCharts(localStats);
+                } else {
+                    // 使用基础数据
+                    renderCharts({});
+                }
+            }
+        }
+
+        // 渲染图表
+        function renderCharts(analytics) {
+            // 访问趋势图
+            const visitCtx = document.getElementById('visitChart');
+            if (visitCtx) {
+                const last7Days = analytics.last7Days || generateLast7DaysData();
+                const labels = last7Days.map(d => {
+                    const date = new Date(d.date);
+                    const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+                    return weekDays[date.getDay()];
+                });
+                const data = last7Days.map(d => d.visits);
+
+                visitChart = new Chart(visitCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels.length > 0 ? labels : ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                        datasets: [{
+                            label: '访问量',
+                            data: data.length > 0 ? data : [0, 0, 0, 0, 0, 0, 0],
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#667eea',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 页面访问分布图
+            const pageCtx = document.getElementById('pageChart');
+            if (pageCtx) {
+                const pageViews = analytics.pageViews || getLocalPageViews();
+                const labels = ['首页', '关于我', '项目展示', '联系我', '五子棋'];
+                const data = [
+                    pageViews.index || 0,
+                    pageViews.about || 0,
+                    pageViews.projects || 0,
+                    pageViews.contact || 0,
+                    pageViews.gomoku || 0
+                ];
+
+                pageChart = new Chart(pageCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: ['#667eea', '#4caf50', '#ff9800', '#f44336', '#9c27b0'],
+                            borderWidth: 0,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            }
+                        },
+                        cutout: '60%'
+                    }
+                });
+            }
+        }
+
+        // 生成最近7天数据
+        function generateLast7DaysData() {
+            const data = [];
+            const today = new Date();
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                // 从本地存储获取数据
+                const analyticsData = JSON.parse(localStorage.getItem('website_analytics')) || {};
+                const dayVisits = analyticsData.recentVisits ? analyticsData.recentVisits.filter(visit => {
+                    const visitDate = new Date(visit.timestamp).toISOString().split('T')[0];
+                    return visitDate === dateStr;
+                }).length : 0;
+                
+                data.push({ date: dateStr, visits: dayVisits });
+            }
+            
+            return data;
+        }
+
+        // 获取本地页面访问量
+        function getLocalPageViews() {
+            const analyticsData = JSON.parse(localStorage.getItem('website_analytics')) || {};
+            const pageViews = {};
+            
+            if (analyticsData.recentVisits) {
+                analyticsData.recentVisits.forEach(visit => {
+                    pageViews[visit.page] = (pageViews[visit.page] || 0) + 1;
+                });
+            }
+            
+            return pageViews;
+        }
+
+        // 生成随机数据
+        function generateRandomData(count, min, max) {
+            return Array.from({length: count}, () => Math.floor(Math.random() * (max - min + 1)) + min);
+        }
+
+        // 更新统计
+        async function updateStats() {
+            try {
+                // 从后端API获取真实的访问统计数据
+                const response = await fetch('http://localhost:3000/api/analytics/stats');
+                if (!response.ok) throw new Error('Failed to get stats');
+                const analytics = await response.json();
+                updateStatsWithData(analytics);
+            } catch (error) {
+                // 静默处理错误，只在开发环境显示
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    console.log('Analytics API unavailable, using local data');
+                }
+                // 降级使用本地数据
+                const localStats = window.WebsiteAnalytics ? window.WebsiteAnalytics.getLocalStats() : null;
+                if (localStats) {
+                    updateStatsWithData(localStats);
+                } else {
+                    // 使用基础数据
+                    updateStatsWithData({});
+                }
+            }
+        }
+
+        // 使用数据更新统计
+        function updateStatsWithData(analytics) {
+            const config = JSON.parse(localStorage.getItem('siteConfig')) || {};
+
+            // 访问量
+            const visits = analytics.totalVisits || getLocalTotalVisits();
+            document.getElementById('visit-count').textContent = visits.toLocaleString();
+            
+            // 增长率
+            const growthRate = analytics.growthRate || calculateGrowthRate();
+            const growthElement = document.getElementById('visit-change');
+            if (growthElement) {
+                growthElement.textContent = growthRate + '%';
+                if (parseFloat(growthRate) >= 0) {
+                    growthElement.parentElement.innerHTML = `<i class="fa fa-arrow-up"></i> ${growthRate}% 较上周`;
+                    growthElement.parentElement.className = 'stats-change up';
+                } else {
+                    growthElement.parentElement.innerHTML = `<i class="fa fa-arrow-down"></i> ${Math.abs(growthRate)}% 较上周`;
+                    growthElement.parentElement.className = 'stats-change down';
+                }
+            }
+
+            // 页面数
+            const pageCount = config.pages ? Object.keys(config.pages).length : 4;
+            document.getElementById('page-stats').textContent = pageCount;
+
+            // 图片数
+            const imageCount = config.images ? config.images.length : 0;
+            document.getElementById('image-stats').textContent = imageCount;
+            const imageChangeElement = document.getElementById('image-change');
+            if (imageChangeElement) {
+                imageChangeElement.textContent = imageCount;
+            }
+
+            // 菜单数
+            const menuCount = config.menuItems ? config.menuItems.length : 4;
+            document.getElementById('menu-stats').textContent = menuCount;
+        }
+
+        // 获取本地总访问量
+        function getLocalTotalVisits() {
+            const analyticsData = JSON.parse(localStorage.getItem('website_analytics')) || {};
+            return analyticsData.recentVisits ? analyticsData.recentVisits.length : 0;
+        }
+
+        // 计算增长率
+        function calculateGrowthRate() {
+            const analyticsData = JSON.parse(localStorage.getItem('website_analytics')) || {};
+            if (!analyticsData.recentVisits || analyticsData.recentVisits.length === 0) {
+                return 0;
+            }
+            
+            const now = new Date();
+            const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+            
+            // 最近一周的访问量
+            const recentWeekVisits = analyticsData.recentVisits.filter(visit => {
+                const visitDate = new Date(visit.timestamp);
+                return visitDate >= lastWeek && visitDate <= now;
+            }).length;
+            
+            // 上一周的访问量
+            const previousWeekVisits = analyticsData.recentVisits.filter(visit => {
+                const visitDate = new Date(visit.timestamp);
+                return visitDate >= twoWeeksAgo && visitDate < lastWeek;
+            }).length;
+            
+            if (previousWeekVisits === 0) {
+                return recentWeekVisits > 0 ? 100 : 0;
+            }
+            
+            const growthRate = ((recentWeekVisits - previousWeekVisits) / previousWeekVisits) * 100;
+            return Math.round(growthRate * 10) / 10;
+        }
+
+        // 刷新统计
+        function refreshStats() {
+            layui.layer.msg('正在刷新数据...', {icon: 16, time: 1000});
+            setTimeout(() => {
+                updateStats();
+                updateSystemInfo();
+                showSuccess('数据刷新成功！');
+            }, 1000);
+        }
+
+        // 添加日志
+        function addLog(type, content) {
+            let logs = JSON.parse(localStorage.getItem('operationLogs')) || [];
+
+            const logTypes = {
+                'login': '登录',
+                'logout': '登出',
+                'view': '查看',
+                'update': '更新',
+                'upload': '上传',
+                'delete': '删除'
+            };
+
+            logs.unshift({
+                time: new Date().toLocaleString(),
+                type: logTypes[type] || type,
+                content: content,
+                user: '管理员'
+            });
+
+            // 只保留最近50条
+            if (logs.length > 50) {
+                logs = logs.slice(0, 50);
+            }
+
+            localStorage.setItem('operationLogs', JSON.stringify(logs));
+            loadLogs();
+
+            // 更新活动列表
+            updateActivityList(type, content);
+        }
+
+        // 加载日志
+        function loadLogs() {
+            const logs = JSON.parse(localStorage.getItem('operationLogs')) || [];
+            const tbody = document.getElementById('logs-table-body');
+
+            if (tbody) {
+                tbody.innerHTML = logs.map(log => `
+                    <tr>
+                        <td>${log.time}</td>
+                        <td><span class="layui-badge layui-bg-blue">${log.type}</span></td>
+                        <td>${log.content}</td>
+                        <td>${log.user}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // 清空日志
+        function clearLogs() {
+            layui.layer.confirm('确定要清空所有日志吗？', function(){
+                localStorage.removeItem('operationLogs');
+                loadLogs();
+                showSuccess('日志已清空！');
+                layui.layer.closeAll();
+            });
+        }
+
+        // 加载访问记录
+        async function loadVisits() {
+            try {
+                // 获取统计数据
+                const statsResponse = await fetch('http://localhost:3000/api/analytics/stats');
+                if (!statsResponse.ok) throw new Error('Failed to get stats');
+                const stats = await statsResponse.json();
+                
+                // 获取访问记录
+                const visitsResponse = await fetch('http://localhost:3000/api/analytics/visits');
+                if (!visitsResponse.ok) throw new Error('Failed to get visits');
+                const visitsData = await visitsResponse.json();
+                
+                loadVisitsWithData(stats, visitsData.visits);
+            } catch (error) {
+                // 静默处理错误，只在开发环境显示
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    console.log('Analytics API unavailable, using local data');
+                }
+                // 降级使用本地数据
+                const localStats = window.WebsiteAnalytics ? window.WebsiteAnalytics.getLocalStats() : null;
+                const localVisits = getLocalVisits();
+                loadVisitsWithData(localStats || {}, localVisits);
+            }
+        }
+
+        // 使用数据加载访问记录
+        function loadVisitsWithData(stats, visits) {
+            // 更新统计卡片
+            const uniqueVisitors = stats.uniqueVisitors || getLocalUniqueVisitors();
+            const totalVisits = stats.totalVisits || getLocalTotalVisits();
+            const todayVisits = stats.last7Days ? getTodayVisits(stats.last7Days) : getLocalTodayVisits();
+            const weekVisits = stats.weeklyVisits || getLocalWeekVisits();
+            
+            document.getElementById('unique-visitors').textContent = uniqueVisitors.toLocaleString();
+            document.getElementById('total-page-views').textContent = totalVisits.toLocaleString();
+            document.getElementById('today-visits').textContent = todayVisits.toLocaleString();
+            document.getElementById('week-visits').textContent = weekVisits.toLocaleString();
+
+            // 加载访问记录表格
+            const tbody = document.getElementById('visits-table-body');
+            const pageNames = {
+                'index': '首页',
+                'about': '关于我',
+                'projects': '项目展示',
+                'contact': '联系方式',
+                'gomoku': '五子棋',
+                'other': '其他'
+            };
+
+            tbody.innerHTML = (visits || []).map(visit => {
+                const date = new Date(visit.timestamp);
+                const browser = getBrowserName(visit.userAgent);
+                const os = getOSName(visit.userAgent);
+
+                return `
+                    <tr>
+                        <td>${date.toLocaleString()}</td>
+                        <td>${pageNames[visit.page] || visit.page}</td>
+                        <td>${visit.referrer}</td>
+                        <td>${browser} / ${os}</td>
+                        <td>${visit.screen}</td>
+                        <td>${visit.language}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 获取本地访问记录
+        function getLocalVisits() {
+            const analyticsData = JSON.parse(localStorage.getItem('website_analytics')) || {};
+            return analyticsData.recentVisits || [];
+        }
+
+        // 获取本地唯一访客数
+        function getLocalUniqueVisitors() {
+            const analyticsData = JSON.parse(localStorage.getItem('website_analytics')) || {};
+            if (!analyticsData.recentVisits) return 0;
+            
+            const sessionIds = new Set();
+            analyticsData.recentVisits.forEach(visit => {
+                sessionIds.add(visit.sessionId);
+            });
+            
+            return sessionIds.size;
+        }
+
+        // 获取本地今日访问量
+        function getLocalTodayVisits() {
+            const analyticsData = JSON.parse(localStorage.getItem('website_analytics')) || {};
+            if (!analyticsData.recentVisits) return 0;
+            
+            const today = new Date().toISOString().split('T')[0];
+            return analyticsData.recentVisits.filter(visit => {
+                const visitDate = new Date(visit.timestamp).toISOString().split('T')[0];
+                return visitDate === today;
+            }).length;
+        }
+
+        // 获取本地本周访问量
+        function getLocalWeekVisits() {
+            const analyticsData = JSON.parse(localStorage.getItem('website_analytics')) || {};
+            if (!analyticsData.recentVisits) return 0;
+            
+            const now = new Date();
+            const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            
+            return analyticsData.recentVisits.filter(visit => {
+                const visitDate = new Date(visit.timestamp);
+                return visitDate >= lastWeek && visitDate <= now;
+            }).length;
+        }
+
+        // 获取今日访问量
+        function getTodayVisits(last7Days) {
+            const today = new Date().toISOString().split('T')[0];
+            const todayStat = last7Days.find(day => day.date === today);
+            return todayStat?.visits || 0;
+        }
+
+        // 获取浏览器名称
+        function getBrowserName(ua) {
+            if (ua.indexOf('Chrome') > -1) return 'Chrome';
+            if (ua.indexOf('Firefox') > -1) return 'Firefox';
+            if (ua.indexOf('Safari') > -1) return 'Safari';
+            if (ua.indexOf('Edge') > -1) return 'Edge';
+            if (ua.indexOf('Opera') > -1) return 'Opera';
+            return '未知';
+        }
+
+        // 获取操作系统名称
+        function getOSName(ua) {
+            if (ua.indexOf('Windows') > -1) return 'Windows';
+            if (ua.indexOf('Mac') > -1) return 'macOS';
+            if (ua.indexOf('Linux') > -1) return 'Linux';
+            if (ua.indexOf('Android') > -1) return 'Android';
+            if (ua.indexOf('iOS') > -1) return 'iOS';
+            return '未知';
+        }
+
+        // 清空访问记录
+        function clearVisits() {
+            layui.layer.confirm('确定要清空所有访问记录吗？', function(){
+                if (window.WebsiteAnalytics) {
+                    window.WebsiteAnalytics.clearData();
+                    loadVisits();
+                    updateStats();
+                    showSuccess('访问记录已清空！');
+                }
+                layui.layer.closeAll();
+            });
+        }
+
+        // 更新活动列表
+        function updateActivityList(type, content) {
+            const list = document.getElementById('activity-list');
+            if (!list) return;
+
+            const icons = {
+                'login': 'user',
+                'logout': 'sign-out',
+                'view': 'eye',
+                'update': 'save',
+                'upload': 'upload',
+                'delete': 'trash'
+            };
+
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="activity-icon ${type}">
+                    <i class="fa fa-${icons[type] || 'circle'}"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">${content}</div>
+                    <div class="activity-time">刚刚</div>
+                </div>
+            `;
+
+            list.insertBefore(li, list.firstChild);
+
+            // 只保留5条
+            while (list.children.length > 5) {
+                list.removeChild(list.lastChild);
+            }
+        }
+
+        // 显示成功消息
+        function showSuccess(message) {
+            const msg = document.getElementById('success-message');
+            msg.innerHTML = '<i class="fa fa-check-circle"></i> ' + message;
+            msg.style.display = 'block';
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+        
+        // 备份数据
+        function backupData() {
+            try {
+                // 收集所有数据
+                const data = {
+                    siteConfig: JSON.parse(localStorage.getItem('siteConfig') || '{}'),
+                    visits: JSON.parse(localStorage.getItem('visits') || '[]'),
+                    logs: JSON.parse(localStorage.getItem('logs') || '[]'),
+                    backupTime: new Date().toISOString()
+                };
+                
+                // 创建JSON文件
+                const jsonString = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                // 创建下载链接
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `website-backup-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                
+                // 清理
+                URL.revokeObjectURL(url);
+                
+                showSuccess('数据备份成功！');
+                
+                // 添加活动日志
+                updateActivityList('upload', '导出数据备份');
+            } catch (error) {
+                console.error('备份数据失败:', error);
+                alert('备份数据失败，请重试');
+            }
+        }
+        
+        // 恢复数据
+        function restoreData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // 确认恢复
+                    if (!confirm('确定要恢复数据吗？这将覆盖当前所有数据！')) {
+                        return;
+                    }
+                    
+                    // 恢复数据
+                    if (data.siteConfig) {
+                        localStorage.setItem('siteConfig', JSON.stringify(data.siteConfig));
+                    }
+                    if (data.visits) {
+                        localStorage.setItem('visits', JSON.stringify(data.visits));
+                    }
+                    if (data.logs) {
+                        localStorage.setItem('logs', JSON.stringify(data.logs));
+                    }
+                    
+                    showSuccess('数据恢复成功！');
+                    
+                    // 添加活动日志
+                    updateActivityList('update', '导入数据备份');
+                    
+                    // 刷新页面
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } catch (error) {
+                    console.error('恢复数据失败:', error);
+                    alert('恢复数据失败，请检查文件格式是否正确');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // 重置数据
+        function resetData() {
+            if (!confirm('确定要重置所有数据吗？此操作不可恢复！')) {
+                return;
+            }
+            
+            if (!confirm('再次确认，确定要清空所有数据吗？')) {
+                return;
+            }
+            
+            try {
+                // 清空所有数据
+                localStorage.removeItem('siteConfig');
+                localStorage.removeItem('visits');
+                localStorage.removeItem('logs');
+                localStorage.removeItem('userLoggedIn');
+                localStorage.removeItem('username');
+                
+                showSuccess('数据已重置！');
+                
+                // 跳转到登录页面
+                setTimeout(() => {
+                    window.location.href = '../login/login.html';
+                }, 1500);
+            } catch (error) {
+                console.error('重置数据失败:', error);
+                alert('重置数据失败，请重试');
+            }
+        }
+
+        // 登出
+        document.getElementById('logout-link').addEventListener('click', function() {
+            layui.layer.confirm('确定要退出登录吗？', function(){
+                addLog('logout', '管理员退出登录');
+                localStorage.removeItem('userLoggedIn');
+                window.location.href = 'login.html';
+            });
+        });
+        
+        // 深色模式支持
+        function initDarkMode() {
+            // 检查用户的主题偏好
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // 确定初始主题
+            const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            // 应用主题
+            if (initialTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+            
+            // 创建主题切换按钮
+            createThemeToggle();
+        }
+        
+        function createThemeToggle() {
+            const nav = document.querySelector('.layui-nav');
+            if (!nav) return;
+            
+            // 检查是否已存在切换按钮
+            if (document.getElementById('theme-toggle')) {
+                return;
+            }
+            
+            const li = document.createElement('li');
+            li.className = 'layui-nav-item';
+            
+            const button = document.createElement('button');
+            button.id = 'theme-toggle';
+            button.textContent = document.body.classList.contains('dark-mode') ? '🌙' : '☀️';
+            button.style.background = 'none';
+            button.style.border = 'none';
+            button.style.color = 'white';
+            button.style.fontSize = '1.2rem';
+            button.style.cursor = 'pointer';
+            button.style.padding = '0 1rem';
+            
+            // 添加点击事件
+            button.addEventListener('click', toggleTheme);
+            
+            li.appendChild(button);
+            nav.appendChild(li);
+        }
+        
+        function toggleTheme() {
+            const body = document.body;
+            const button = document.getElementById('theme-toggle');
+            
+            // 切换主题类
+            body.classList.toggle('dark-mode');
+            
+            // 更新按钮图标
+            if (body.classList.contains('dark-mode')) {
+                button.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+                // 更新深色模式样式
+                updateDarkModeStyles();
+            } else {
+                button.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+                // 恢复浅色模式样式
+                updateDarkModeStyles();
+            }
+        }
+        
+        function updateDarkModeStyles() {
+            const isDark = document.body.classList.contains('dark-mode');
+            const body = document.body;
+            const cards = document.querySelectorAll('.layui-card, .stats-card, .chart-container');
+            const inputs = document.querySelectorAll('input, textarea, select');
+            
+            if (isDark) {
+                body.style.backgroundColor = '#121212';
+                body.style.color = '#e0e0e0';
+                
+                cards.forEach(card => {
+                    card.style.backgroundColor = '#1e1e1e';
+                    card.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)';
+                });
+                
+                inputs.forEach(input => {
+                    input.style.backgroundColor = '#252525';
+                    input.style.color = '#e0e0e0';
+                    input.style.borderColor = '#333';
+                });
+            } else {
+                body.style.backgroundColor = '#f5f5f5';
+                body.style.color = '#333';
+                
+                cards.forEach(card => {
+                    card.style.backgroundColor = 'white';
+                    card.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.1)';
+                });
+                
+                inputs.forEach(input => {
+                    input.style.backgroundColor = 'white';
+                    input.style.color = '#333';
+                    input.style.borderColor = '#ddd';
+                });
+            }
+        }
+        
+        // 初始化深色模式
+        initDarkMode();
+    </script>
+    <script src="../js/analytics.js"></script>
+</body>
+</html>

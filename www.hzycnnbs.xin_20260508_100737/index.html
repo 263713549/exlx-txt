@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人网站</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/css/index.css">
+    <script>
+        // 页面加载时执行
+        window.addEventListener('load', function() {
+            // 初始化导航栏滚动效果
+            const header = document.querySelector('header');
+            if (header) {
+                let lastScrollY = window.scrollY;
+                let ticking = false;
+
+                function handleScroll() {
+                    const currentScrollY = window.scrollY;
+                    
+                    if (currentScrollY > 50 && !header.classList.contains('scrolled')) {
+                        header.classList.add('scrolled');
+                    } else if (currentScrollY <= 50 && header.classList.contains('scrolled')) {
+                        header.classList.remove('scrolled');
+                    }
+                    
+                    lastScrollY = currentScrollY;
+                    ticking = false;
+                }
+
+                function requestTick() {
+                    if (!ticking) {
+                        requestAnimationFrame(handleScroll);
+                        ticking = true;
+                    }
+                }
+
+                handleScroll();
+                window.addEventListener('scroll', requestTick);
+            }
+            
+            // 添加首页动画
+            function addAnimation(selector, animationClass, delay = 0) {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach((element, index) => {
+                    setTimeout(() => {
+                        element.classList.add(animationClass);
+                    }, delay + (index * 100));
+                });
+            }
+            
+            addAnimation('.hero h1', 'fade-in', 100);
+            addAnimation('.hero p', 'fade-in', 200);
+            addAnimation('.hero-buttons', 'fade-in', 300);
+            addAnimation('.feature-card', 'scale-in', 400);
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="apps/home/views/about.html">关于我</a></li>
+                <li><a href="apps/home/views/projects.html">我的项目</a></li>
+                <li><a href="apps/home/views/contact.html">联系方式</a></li>
+                <li><a href="apps/home/views/login.html">登录</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section id="home">
+        <div class="hero-bg"></div>
+        <div class="hero">
+            <h1 id="hero-title">你好，我是 <span>开发者</span></h1>
+            <p id="hero-description">专注于前端开发和设计，创造美观、响应式的网站</p>
+            <div class="hero-buttons">
+                <a href="apps/home/views/about.html" class="hero-btn hero-btn-primary">了解更多</a>
+                <a href="apps/home/views/projects.html" class="hero-btn hero-btn-secondary">查看项目</a>
+            </div>
+        </div>
+    </section>
+    
+    <section class="features">
+        <div class="features-container">
+            <h2>我的专长</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: transparent; color: #667eea;">
+                        <img src="static/images/frontend-icon.png" alt="前端开发" style="width: 40px; height: 40px; display: block;">
+                    </div>
+                    <h3>前端开发</h3>
+                    <p>使用HTML、CSS、JavaScript等技术栈，创建美观、响应式的网站界面，确保良好的用户体验。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: transparent; color: #667eea;">
+                        <img src="static/images/design-icon.png" alt="UI/UX设计" style="width: 40px; height: 40px; display: block;">
+                    </div>
+                    <h3>UI/UX设计</h3>
+                    <p>注重用户体验和视觉美感，设计直观、易用的界面，提升用户满意度。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: transparent; color: #667eea;">
+                        <img src="static/images/fullstack-icon.png" alt="全栈开发" style="width: 40px; height: 40px; display: block;">
+                    </div>
+                    <h3>全栈开发</h3>
+                    <p>掌握前后端技术，能够独立完成完整的 web 应用开发，从前端界面到后端服务。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>&copy; 2026 个人网站. 保留所有权利.</p>
+    </footer>
+    <script type="module" src="static/js/analytics.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>联系方式</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="contact.css">
+    <script type="module">
+        import { loadConfig, loadPageContent, initNavbarScroll, initDarkMode, initPageLoader, initScrollReveal, addAnimation, initFormValidation, showFormSuccess, showFormError } from '../js/utils.js';
+        
+        // 初始化页面加载动画
+        initPageLoader();
+        
+        // 页面加载时执行
+        window.addEventListener('load', function() {
+            const config = loadConfig();
+            loadPageContent('contact');
+            initNavbarScroll();
+            initDarkMode();
+            initScrollReveal();
+            
+            // 添加联系页面动画
+            addAnimation('#contact-title', 'fade-in', 100);
+            addAnimation('.contact-info', 'slide-in-left', 200);
+            addAnimation('.contact-form', 'slide-in-right', 300);
+            
+            // 更新联系信息
+            if (config.contact.email) {
+                document.querySelector('.contact-email').textContent = config.contact.email;
+            }
+            if (config.contact.phone) {
+                document.querySelector('.contact-phone').textContent = config.contact.phone;
+            }
+            if (config.contact.wechat) {
+                document.querySelector('.contact-wechat').textContent = config.contact.wechat;
+            }
+            
+            // 初始化表单验证
+            const validator = initFormValidation('contact-form');
+            
+            // 添加表单提交事件
+            document.getElementById('contact-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 验证表单
+                if (validator.validate()) {
+                    // 获取表单数据
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const message = document.getElementById('message').value;
+                    
+                    // 模拟表单提交
+                    showFormSuccess('留言已发送，我们会尽快回复您！');
+                    document.getElementById('contact-form').reset();
+                } else {
+                    showFormError('请检查表单中的错误信息');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="../about/about.html">关于我</a></li>
+                <li><a href="../projects/projects.html">我的项目</a></li>
+                <li><a href="contact.html">联系方式</a></li>
+                <li><a href="../login/login.html">登录</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section id="contact">
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3 id="contact-title">联系信息</h3>
+                
+                <div class="contact-item">
+                    <div class="contact-item-icon">📧</div>
+                    <div class="contact-item-content">
+                        <h4>邮箱</h4>
+                        <p class="contact-email">example@example.com</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-item-icon">📱</div>
+                    <div class="contact-item-content">
+                        <h4>电话</h4>
+                        <p class="contact-phone">+86 123 4567 8910</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-item-icon">💬</div>
+                    <div class="contact-item-content">
+                        <h4>微信</h4>
+                        <p class="contact-wechat">wechat_id</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-item-icon">📍</div>
+                    <div class="contact-item-content">
+                        <h4>地址</h4>
+                        <p>北京市朝阳区某某大厦</p>
+                    </div>
+                </div>
+                
+                <div class="social-links">
+                    <h4>社交媒体</h4>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon">
+                            <img src="../images/linkedin-icon.png" alt="LinkedIn" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="#" class="social-icon">
+                            <img src="../images/facebook-icon.png" alt="Facebook" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="#" class="social-icon">
+                            <img src="../images/twitter-icon.png" alt="Twitter" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="#" class="social-icon">
+                            <img src="../images/instagram-icon.png" alt="Instagram" style="width: 24px; height: 24px;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-form">
+                <h3>发送留言</h3>
+                <form id="contact-form">
+                    <div class="form-group">
+                        <label for="name">姓名</label>
+                        <input type="text" id="name" name="name" data-required data-min-length="2" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <input type="email" id="email" name="email" data-required data-email required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">留言内容</label>
+                        <textarea id="message" name="message" data-required data-min-length="10" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">发送留言</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>&copy; 2026 个人网站. 保留所有权利.</p>
+    </footer>
+    <script src="../js/analytics.js"></script>
+</body>
+</html>

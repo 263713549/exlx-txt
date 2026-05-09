@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>联系方式</title>
+    <link rel="stylesheet" href="../../../static/css/style.css">
+    <link rel="stylesheet" href="../../../static/css/contact.css">
+    <script>
+        // 页面加载时执行
+        window.addEventListener('load', function() {
+            // 初始化导航栏滚动效果
+            const header = document.querySelector('header');
+            if (header) {
+                let lastScrollY = window.scrollY;
+                let ticking = false;
+
+                function handleScroll() {
+                    const currentScrollY = window.scrollY;
+                    
+                    if (currentScrollY > 50 && !header.classList.contains('scrolled')) {
+                        header.classList.add('scrolled');
+                    } else if (currentScrollY <= 50 && header.classList.contains('scrolled')) {
+                        header.classList.remove('scrolled');
+                    }
+                    
+                    lastScrollY = currentScrollY;
+                    ticking = false;
+                }
+
+                function requestTick() {
+                    if (!ticking) {
+                        requestAnimationFrame(handleScroll);
+                        ticking = true;
+                    }
+                }
+
+                handleScroll();
+                window.addEventListener('scroll', requestTick);
+            }
+            
+            // 添加联系页面动画
+            function addAnimation(selector, animationClass, delay = 0) {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach((element, index) => {
+                    setTimeout(() => {
+                        element.classList.add(animationClass);
+                    }, delay + (index * 100));
+                });
+            }
+            
+            addAnimation('#contact-title', 'fade-in', 100);
+            addAnimation('.contact-info', 'slide-in-left', 200);
+            addAnimation('.contact-form', 'slide-in-right', 300);
+            
+            // 简单的表单验证
+            function validateForm(form) {
+                const inputs = form.querySelectorAll('input[required], textarea[required]');
+                let isValid = true;
+                
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        isValid = false;
+                        input.classList.add('error');
+                    } else {
+                        input.classList.remove('error');
+                    }
+                });
+                
+                return isValid;
+            }
+            
+            // 显示成功消息
+            function showFormSuccess(message) {
+                let container = document.getElementById('form-success');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.id = 'form-success';
+                    container.className = 'form-success-container';
+                    document.body.appendChild(container);
+                }
+                
+                container.innerHTML = `
+                    <div class="form-success-message">
+                        <i class="success-icon">✅</i>
+                        <span>${message}</span>
+                        <button class="success-close" onclick="this.parentElement.parentElement.style.display='none'">×</button>
+                    </div>
+                `;
+                container.style.display = 'block';
+                
+                setTimeout(() => {
+                    if (container) {
+                        container.style.display = 'none';
+                    }
+                }, 3000);
+            }
+            
+            // 显示错误消息
+            function showFormError(message) {
+                let container = document.getElementById('form-error');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.id = 'form-error';
+                    container.className = 'form-error-container';
+                    document.body.appendChild(container);
+                }
+                
+                container.innerHTML = `
+                    <div class="form-error-message">
+                        <i class="error-icon">⚠️</i>
+                        <span>${message}</span>
+                        <button class="error-close" onclick="this.parentElement.parentElement.style.display='none'">×</button>
+                    </div>
+                `;
+                container.style.display = 'block';
+                
+                setTimeout(() => {
+                    if (container) {
+                        container.style.display = 'none';
+                    }
+                }, 3000);
+            }
+            
+            // 添加表单提交事件
+            const contactForm = document.getElementById('contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // 验证表单
+                    if (validateForm(contactForm)) {
+                        // 模拟表单提交
+                        showFormSuccess('留言已发送，我们会尽快回复您！');
+                        contactForm.reset();
+                    } else {
+                        showFormError('请检查表单中的错误信息');
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="../../../index.html">首页</a></li>
+                <li><a href="../../../apps/home/views/about.html">关于我</a></li>
+                <li><a href="../../../apps/home/views/projects.html">我的项目</a></li>
+                <li><a href="../../../apps/home/views/contact.html">联系方式</a></li>
+                <li><a href="../../../apps/home/views/login.html">登录</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section id="contact">
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3 id="contact-title">联系信息</h3>
+                
+                <div class="contact-item">
+                    <div class="contact-item-icon">📧</div>
+                    <div class="contact-item-content">
+                        <h4>邮箱</h4>
+                        <p class="contact-email">example@example.com</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-item-icon">📱</div>
+                    <div class="contact-item-content">
+                        <h4>电话</h4>
+                        <p class="contact-phone">+86 123 4567 8910</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-item-icon">💬</div>
+                    <div class="contact-item-content">
+                        <h4>微信</h4>
+                        <p class="contact-wechat">wechat_id</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-item-icon">📍</div>
+                    <div class="contact-item-content">
+                        <h4>地址</h4>
+                        <p>北京市朝阳区某某大厦</p>
+                    </div>
+                </div>
+                
+                <div class="social-links">
+                    <h4>社交媒体</h4>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon">
+                            <img src="../../../static/images/linkedin-icon.png" alt="LinkedIn" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="#" class="social-icon">
+                            <img src="../../../static/images/facebook-icon.png" alt="Facebook" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="#" class="social-icon">
+                            <img src="../../../static/images/twitter-icon.png" alt="Twitter" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="#" class="social-icon">
+                            <img src="../../../static/images/instagram-icon.png" alt="Instagram" style="width: 24px; height: 24px;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-form">
+                <h3>发送留言</h3>
+                <form id="contact-form">
+                    <div class="form-group">
+                        <label for="name">姓名</label>
+                        <input type="text" id="name" name="name" data-required data-min-length="2" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <input type="email" id="email" name="email" data-required data-email required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">留言内容</label>
+                        <textarea id="message" name="message" data-required data-min-length="10" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">发送留言</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>&copy; 2026 个人网站. 保留所有权利.</p>
+    </footer>
+    <script type="module" src="../../../static/js/analytics.js"></script>
+</body>
+</html>

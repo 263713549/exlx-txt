@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* 登录页面的额外样式 */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding-top: 80px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .login-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            margin: 2rem auto;
+        }
+        
+        .login-container h1 {
+            margin-bottom: 2rem;
+            color: #333;
+            font-size: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .login-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .login-btn:hover {
+            background: #5a6fe0;
+            transform: translateY(-2px);
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        
+        .back-link {
+            margin-top: 1.5rem;
+            display: block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* 移动端响应式样式 */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            .login-container {
+                padding: 2rem;
+                margin: 1.5rem auto;
+            }
+            
+            .login-container h1 {
+                font-size: 1.8rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1.2rem;
+            }
+            
+            .form-group input {
+                padding: 0.8rem;
+                font-size: 0.95rem;
+            }
+            
+            .login-btn {
+                padding: 0.8rem;
+                font-size: 1rem;
+                margin-top: 0.8rem;
+            }
+            
+            .error-message {
+                padding: 0.8rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .back-link {
+                margin-top: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding-top: 60px;
+                padding-left: 0.8rem;
+                padding-right: 0.8rem;
+            }
+            
+            .login-container {
+                padding: 1.5rem;
+                margin: 1rem auto;
+            }
+            
+            .login-container h1 {
+                font-size: 1.5rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            
+            .form-group label {
+                font-size: 0.9rem;
+                margin-bottom: 0.4rem;
+            }
+            
+            .form-group input {
+                padding: 0.7rem;
+                font-size: 0.9rem;
+            }
+            
+            .login-btn {
+                padding: 0.7rem;
+                font-size: 0.95rem;
+                margin-top: 0.6rem;
+            }
+            
+            .error-message {
+                padding: 0.7rem;
+                margin-bottom: 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .back-link {
+                margin-top: 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .login-container {
+                padding: 1.2rem;
+            }
+            
+            .login-container h1 {
+                font-size: 1.3rem;
+            }
+            
+            .form-group input {
+                padding: 0.6rem;
+                font-size: 0.85rem;
+            }
+            
+            .login-btn {
+                padding: 0.6rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="../about/about.html">关于我</a></li>
+                <li><a href="../projects/projects.html">我的项目</a></li>
+                <li><a href="../contact/contact.html">联系方式</a></li>
+                <li><a href="login.html">登录</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <div class="login-container">
+        <h1>登录</h1>
+        <div class="error-message" id="error-message">
+            用户名或密码错误
+        </div>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="login-btn">登录</button>
+        </form>
+        <a href="../index.html" class="back-link">返回首页</a>
+    </div>
+    
+    <script>
+        // 登录表单提交处理
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 获取表单数据
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // 简单的登录验证（实际项目中应该使用后端验证）
+            if (username === 'admin' && password === 'admin123') {
+                // 登录成功，存储登录状态
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('username', username);
+                
+                // 跳转到管理页面
+                window.location.href = '../admin/admin.html';
+            } else {
+                // 登录失败，显示错误信息
+                document.getElementById('error-message').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('error-message').style.display = 'none';
+                }, 3000);
+            }
+        });
+    </script>
+    <script src="../js/analytics.js"></script>
+</body>
+</html>
